@@ -3650,13 +3650,25 @@
     if (btn) btn.style.display = 'none';
 
     const certEl = document.querySelector('.cert-wrap');
+    const modal = document.getElementById('cert-modal');
 
     try {
-      // Temporarily expand cert to full height so nothing gets clipped
-      const prevOverflow = certEl.style.overflow;
-      const prevMaxHeight = certEl.style.maxHeight;
+      // Temporarily remove overflow/height constraints so full content is captured
+      const modalPrevOverflow = modal.style.overflow;
+      const modalPrevHeight = modal.style.height;
+      const modalPrevMaxHeight = modal.style.maxHeight;
+      modal.style.overflow = 'visible';
+      modal.style.height = 'auto';
+      modal.style.maxHeight = 'none';
+
+      const certPrevOverflow = certEl.style.overflow;
       certEl.style.overflow = 'visible';
-      certEl.style.maxHeight = 'none';
+
+      // Wait a tick for layout to settle
+      await new Promise(r => setTimeout(r, 100));
+
+      const fullHeight = certEl.scrollHeight;
+      const fullWidth = certEl.scrollWidth;
 
       const canvas = await html2canvas(certEl, {
         scale: 2,
@@ -3665,15 +3677,17 @@
         backgroundColor: '#1a1830',
         scrollX: 0,
         scrollY: 0,
-        windowWidth: certEl.scrollWidth,
-        windowHeight: certEl.scrollHeight,
-        width: certEl.scrollWidth,
-        height: certEl.scrollHeight
+        width: fullWidth,
+        height: fullHeight,
+        windowWidth: fullWidth,
+        windowHeight: fullHeight
       });
 
       // Restore styles
-      certEl.style.overflow = prevOverflow;
-      certEl.style.maxHeight = prevMaxHeight;
+      modal.style.overflow = modalPrevOverflow;
+      modal.style.height = modalPrevHeight;
+      modal.style.maxHeight = modalPrevMaxHeight;
+      certEl.style.overflow = certPrevOverflow;
 
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
@@ -3681,9 +3695,8 @@
       const imgWidthMM = 180;
       const imgHeightMM = (canvas.height * imgWidthMM) / canvas.width;
 
-      // Make PDF page exactly fit the certificate height
       const pdf = new jsPDF({
-        orientation: imgHeightMM > imgWidthMM ? 'portrait' : 'landscape',
+        orientation: 'portrait',
         unit: 'mm',
         format: [imgWidthMM + 20, imgHeightMM + 20]
       });
