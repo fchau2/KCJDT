@@ -574,9 +574,7 @@
     color: #111;
   }
   .cert-wrap::before {
-    content:'';position:absolute;inset:8px;
-    border:1.5px solid rgba(184,150,12,0.3);
-    border-radius:1.1rem;pointer-events:none;
+    display: none;
   }
   .cert-badge { font-size: 3.5rem; margin-bottom: 0.5rem; }
   .cert-title { font-size: 0.75rem; font-weight:800; letter-spacing:3px; color: #b8960c; text-transform:uppercase; margin-bottom:0.3rem; }
@@ -710,7 +708,7 @@
 <!-- ══ CERTIFICATE MODAL ══ -->
 <div id="cert-modal">
   <div class="cert-wrap">
-    <div class="cert-title">Victorian Digital Technologies Curriculum</div>
+
     <div class="cert-heading">Certificate of Completion</div>
     <div class="cert-sub">Levels 7 &amp; 8 — DigiTech Explorer</div>
     <div style="margin-bottom:0.4rem;font-size:0.8rem;color:var(--muted);">This certifies that</div>
@@ -726,7 +724,7 @@
     </div>
     <div class="cert-footer">
       <div class="cert-seal">📘</div>
-      DigiTech Explorer · Victorian Curriculum F–10 · Digital Technologies · Levels 7–8<br>
+      DigiTech Explorer · Levels 7–8<br>
       Completed on <span id="cert-date">—</span>
     </div>
   </div>
@@ -2794,9 +2792,87 @@
   <div class="activity-card">
     <div class="activity-label">📚 Activity 1 — Case Study</div>
     <h3>Evaluate This App!</h3>
-    <div class="scenario-box">
-      <h4>🌏 Case Study: "FarmSmart" App</h4>
-      <p>FarmSmart is an app that uses AI to tell farmers exactly when to water their crops based on weather data. It connects to smart irrigation systems. The app is free but requires expensive smart sensors. It runs on a server farm that uses 100% solar energy.</p>
+    <!-- FarmSmart Case Study -->
+    <div style="background:#f4f7f0;border-radius:1rem;padding:1.5rem;margin-bottom:1.2rem;border:2px solid #c5deb8;">
+      <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;">
+        <div style="font-size:2rem;">🌾</div>
+        <div>
+          <div style="font-size:1.1rem;font-weight:900;color:#2d6a2d;">FarmSmart</div>
+          <div style="font-size:0.75rem;color:#7a9a7a;font-style:italic;">AI-powered crop irrigation app</div>
+        </div>
+        <div style="margin-left:auto;background:#e0f0d8;border:1px solid #a8cc90;border-radius:0.5rem;padding:0.3rem 0.7rem;font-size:0.7rem;color:#2d6a2d;font-weight:700;">CASE STUDY</div>
+      </div>
+
+      <!-- Side by side: text + mock screenshot -->
+      <div style="display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap;">
+
+        <!-- Text description -->
+        <div style="flex:1;min-width:180px;">
+          <p style="font-size:0.82rem;color:#3a4a3a;line-height:1.7;margin-bottom:0.8rem;">FarmSmart is an app that uses <strong style="color:#2d6a2d;">AI</strong> to tell farmers exactly when to water their crops based on weather data. It connects to smart irrigation systems.</p>
+          <ul style="font-size:0.8rem;color:#3a4a3a;line-height:1.8;padding-left:1.1rem;margin:0;">
+            <li>App is <strong style="color:#2d6a2d;">free</strong> to download</li>
+            <li>Requires <strong style="color:#c04a1a;">expensive</strong> smart sensors</li>
+            <li>Servers run on <strong style="color:#2d6a2d;">100% solar energy</strong></li>
+            <li>Uses AI to <strong style="color:#8a6a00;">predict</strong> watering needs</li>
+          </ul>
+        </div>
+
+        <!-- Mock app screenshot as SVG -->
+        <div style="flex:0 0 auto;">
+          <svg width="175" height="310" viewBox="0 0 175 310" xmlns="http://www.w3.org/2000/svg" style="border-radius:16px;display:block;box-shadow:0 2px 12px rgba(0,0,0,0.12);">
+            <!-- Phone body -->
+            <rect width="175" height="310" rx="20" fill="#f8fdf5"/>
+            <!-- Status bar -->
+            <rect width="175" height="22" rx="0" fill="#e8f4e0"/>
+            <text x="14" y="15" font-size="9" fill="#666" font-family="monospace">9:41</text>
+            <text x="148" y="15" font-size="9" fill="#666" font-family="monospace">●●●</text>
+            <!-- App header -->
+            <rect y="22" width="175" height="38" fill="#3a8a3a"/>
+            <text x="14" y="44" font-size="13" fill="#fff" font-weight="bold" font-family="sans-serif">🌾 FarmSmart</text>
+            <rect x="140" y="30" width="22" height="14" rx="4" fill="rgba(255,255,255,0.25)"/>
+            <text x="145" y="41" font-size="8" fill="#fff" font-family="sans-serif">AI</text>
+            <!-- Weather card -->
+            <rect x="10" y="68" width="155" height="52" rx="10" fill="#e8f4e0" stroke="#c5deb8" stroke-width="1"/>
+            <text x="20" y="84" font-size="9" fill="#7a9a7a" font-family="sans-serif">TODAY'S CONDITIONS</text>
+            <text x="20" y="100" font-size="18" font-family="sans-serif">⛅</text>
+            <text x="46" y="100" font-size="13" fill="#2d4a2d" font-weight="bold" font-family="sans-serif">24°C</text>
+            <text x="90" y="92" font-size="8" fill="#7a9a7a" font-family="sans-serif">Humidity: 58%</text>
+            <text x="90" y="106" font-size="8" fill="#7a9a7a" font-family="sans-serif">Wind: 12 km/h</text>
+            <!-- AI recommendation -->
+            <rect x="10" y="128" width="155" height="62" rx="10" fill="#e0f0d8" stroke="#3a8a3a" stroke-width="1.2"/>
+            <text x="20" y="144" font-size="8" fill="#2d6a2d" font-weight="bold" font-family="sans-serif">🤖 AI RECOMMENDATION</text>
+            <text x="20" y="160" font-size="11" fill="#1a3a1a" font-weight="bold" font-family="sans-serif">Water at 6:00 AM</text>
+            <text x="20" y="174" font-size="8" fill="#5a7a5a" font-family="sans-serif">Duration: 18 min · Zone 2 &amp; 4</text>
+            <!-- Progress bars - field zones -->
+            <text x="14" y="206" font-size="8" fill="#7a9a7a" font-family="sans-serif">FIELD MOISTURE</text>
+            <!-- Zone 1 -->
+            <text x="14" y="220" font-size="8" fill="#3a4a3a" font-family="sans-serif">Zone 1</text>
+            <rect x="55" y="212" width="100" height="7" rx="3" fill="#d0e8c8"/>
+            <rect x="55" y="212" width="72" height="7" rx="3" fill="#3a8a3a"/>
+            <text x="158" y="220" font-size="7" fill="#3a8a3a" font-family="monospace">72%</text>
+            <!-- Zone 2 -->
+            <text x="14" y="234" font-size="8" fill="#3a4a3a" font-family="sans-serif">Zone 2</text>
+            <rect x="55" y="226" width="100" height="7" rx="3" fill="#d0e8c8"/>
+            <rect x="55" y="226" width="31" height="7" rx="3" fill="#e05a20"/>
+            <text x="158" y="234" font-size="7" fill="#e05a20" font-family="monospace">31%</text>
+            <!-- Zone 3 -->
+            <text x="14" y="248" font-size="8" fill="#3a4a3a" font-family="sans-serif">Zone 3</text>
+            <rect x="55" y="240" width="100" height="7" rx="3" fill="#d0e8c8"/>
+            <rect x="55" y="240" width="55" height="7" rx="3" fill="#c8a000"/>
+            <text x="158" y="248" font-size="7" fill="#c8a000" font-family="monospace">55%</text>
+            <!-- Solar indicator -->
+            <rect x="10" y="260" width="155" height="30" rx="8" fill="#e8f4e0" stroke="#c5deb8" stroke-width="1"/>
+            <text x="20" y="279" font-size="8" fill="#2d6a2d" font-family="sans-serif">☀️ Solar powered · 100% renewable</text>
+            <!-- Bottom nav -->
+            <rect y="295" width="175" height="15" fill="#e8f4e0"/>
+            <text x="22" y="306" font-size="8" fill="#3a8a3a" font-family="sans-serif">🏠</text>
+            <text x="62" y="306" font-size="8" fill="#aaa" font-family="sans-serif">📊</text>
+            <text x="102" y="306" font-size="8" fill="#aaa" font-family="sans-serif">⚙️</text>
+            <text x="142" y="306" font-size="8" fill="#666" font-family="sans-serif">👤</text>
+          </svg>
+        </div>
+
+      </div>
     </div>
     <div id="q9-container">
       <p style="font-weight:700;margin-bottom:0.5rem;">FarmSmart uses 100% solar energy for its servers. Which type of sustainability does this address?</p>
@@ -3659,6 +3735,7 @@
       certOverflow: certEl.style.overflow,
       certMaxWidth: certEl.style.maxWidth,
       certWidth: certEl.style.width,
+      certPaddingBottom: certEl.style.paddingBottom,
     };
 
     const restore = () => {
@@ -3668,6 +3745,7 @@
       certEl.style.overflow = saved.certOverflow;
       certEl.style.maxWidth = saved.certMaxWidth;
       certEl.style.width = saved.certWidth;
+      certEl.style.paddingBottom = saved.certPaddingBottom;
       allBtns.forEach(b => b.style.display = '');
     };
 
@@ -3680,36 +3758,47 @@
       modal.style.height = 'auto';
       modal.style.maxHeight = 'none';
       certEl.style.overflow = 'visible';
-      certEl.style.maxWidth = '800px';
-      certEl.style.width = '800px';
+      certEl.style.maxWidth = '680px';
+      certEl.style.width = '680px';
+      certEl.style.paddingBottom = '4rem';
+
+      // Wrap in a padded container so borders aren't clipped during capture
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'padding: 20px; background: #fff; display: inline-block;';
+      certEl.parentNode.insertBefore(wrapper, certEl);
+      wrapper.appendChild(certEl);
 
       await new Promise(r => setTimeout(r, 150));
 
-      const canvas = await html2canvas(certEl, {
+      const canvas = await html2canvas(wrapper, {
         scale: 2,
         useCORS: true,
         allowTaint: true,
         backgroundColor: '#ffffff',
         scrollX: 0,
         scrollY: 0,
-        width: certEl.scrollWidth,
-        height: certEl.scrollHeight,
-        windowWidth: certEl.scrollWidth,
-        windowHeight: certEl.scrollHeight
+        width: wrapper.scrollWidth,
+        height: wrapper.scrollHeight,
+        windowWidth: wrapper.scrollWidth,
+        windowHeight: wrapper.scrollHeight
       });
+
+      // Unwrap
+      wrapper.parentNode.insertBefore(certEl, wrapper);
+      wrapper.parentNode.removeChild(wrapper);
 
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
-      const imgWidthMM = 180;
+      const imgWidthMM = 170;
       const imgHeightMM = (canvas.height * imgWidthMM) / canvas.width;
 
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
-        format: [imgWidthMM + 20, imgHeightMM + 20]
+        format: [imgWidthMM + 30, imgHeightMM + 30]
       });
 
-      pdf.addImage(imgData, 'PNG', 10, 10, imgWidthMM, imgHeightMM);
+      pdf.addImage(imgData, 'PNG', 15, 15, imgWidthMM, imgHeightMM);
       pdf.save(`DigiTech_Certificate_${studentName || 'Student'}.pdf`);
 
     } catch (err) {
