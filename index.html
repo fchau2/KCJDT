@@ -3647,34 +3647,43 @@
   }
 
   async function printCertificate() {
-    // Hide all buttons in the modal during capture
-    const allBtns = document.querySelectorAll('#cert-modal button');
-    allBtns.forEach(b => b.style.display = 'none');
-
     const certEl = document.querySelector('.cert-wrap');
     const modal = document.getElementById('cert-modal');
+    const allBtns = document.querySelectorAll('#cert-modal button');
+
+    // Snapshot original styles before touching anything
+    const saved = {
+      modalOverflow: modal.style.overflow,
+      modalHeight: modal.style.height,
+      modalMaxHeight: modal.style.maxHeight,
+      certOverflow: certEl.style.overflow,
+      certMaxWidth: certEl.style.maxWidth,
+      certWidth: certEl.style.width,
+    };
+
+    const restore = () => {
+      modal.style.overflow = saved.modalOverflow;
+      modal.style.height = saved.modalHeight;
+      modal.style.maxHeight = saved.modalMaxHeight;
+      certEl.style.overflow = saved.certOverflow;
+      certEl.style.maxWidth = saved.certMaxWidth;
+      certEl.style.width = saved.certWidth;
+      allBtns.forEach(b => b.style.display = '');
+    };
 
     try {
-      // Temporarily remove overflow/height constraints so full content is captured
-      const modalPrevOverflow = modal.style.overflow;
-      const modalPrevHeight = modal.style.height;
-      const modalPrevMaxHeight = modal.style.maxHeight;
+      // Hide buttons
+      allBtns.forEach(b => b.style.display = 'none');
+
+      // Expand to full size for capture
       modal.style.overflow = 'visible';
       modal.style.height = 'auto';
       modal.style.maxHeight = 'none';
-
-      const certPrevOverflow = certEl.style.overflow;
-      const certPrevMaxWidth = certEl.style.maxWidth;
-      const certPrevWidth = certEl.style.width;
       certEl.style.overflow = 'visible';
       certEl.style.maxWidth = '800px';
       certEl.style.width = '800px';
 
-      // Wait a tick for layout to settle
-      await new Promise(r => setTimeout(r, 100));
-
-      const fullHeight = certEl.scrollHeight;
-      const fullWidth = certEl.scrollWidth;
+      await new Promise(r => setTimeout(r, 150));
 
       const canvas = await html2canvas(certEl, {
         scale: 2,
@@ -3683,23 +3692,14 @@
         backgroundColor: '#ffffff',
         scrollX: 0,
         scrollY: 0,
-        width: fullWidth,
-        height: fullHeight,
-        windowWidth: fullWidth,
-        windowHeight: fullHeight
+        width: certEl.scrollWidth,
+        height: certEl.scrollHeight,
+        windowWidth: certEl.scrollWidth,
+        windowHeight: certEl.scrollHeight
       });
-
-      // Restore styles
-      modal.style.overflow = modalPrevOverflow;
-      modal.style.height = modalPrevHeight;
-      modal.style.maxHeight = modalPrevMaxHeight;
-      certEl.style.overflow = certPrevOverflow;
-      certEl.style.maxWidth = certPrevMaxWidth;
-      certEl.style.width = certPrevWidth;
 
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
-
       const imgWidthMM = 180;
       const imgHeightMM = (canvas.height * imgWidthMM) / canvas.width;
 
@@ -3711,13 +3711,14 @@
 
       pdf.addImage(imgData, 'PNG', 10, 10, imgWidthMM, imgHeightMM);
       pdf.save(`DigiTech_Certificate_${studentName || 'Student'}.pdf`);
+
     } catch (err) {
       console.error('PDF generation failed:', err);
       alert('Could not generate PDF. Please try again.');
+    } finally {
+      // Always restore — no matter what happens
+      restore();
     }
-
-    if (btn) btn.style.display = '';
-    allBtns.forEach(b => b.style.display = '');
   }
 </script>
 </body>
