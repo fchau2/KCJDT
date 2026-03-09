@@ -3652,24 +3652,43 @@
     const certEl = document.querySelector('.cert-wrap');
 
     try {
+      // Temporarily expand cert to full height so nothing gets clipped
+      const prevOverflow = certEl.style.overflow;
+      const prevMaxHeight = certEl.style.maxHeight;
+      certEl.style.overflow = 'visible';
+      certEl.style.maxHeight = 'none';
+
       const canvas = await html2canvas(certEl, {
         scale: 2,
         useCORS: true,
-        backgroundColor: '#ffffff'
+        allowTaint: true,
+        backgroundColor: '#1a1830',
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: certEl.scrollWidth,
+        windowHeight: certEl.scrollHeight,
+        width: certEl.scrollWidth,
+        height: certEl.scrollHeight
       });
+
+      // Restore styles
+      certEl.style.overflow = prevOverflow;
+      certEl.style.maxHeight = prevMaxHeight;
 
       const imgData = canvas.toDataURL('image/png');
       const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-      const margin = 15;
-      const imgW = pageW - margin * 2;
-      const imgH = (canvas.height * imgW) / canvas.width;
-      const yOffset = (pageH - imgH) / 2;
+      const imgWidthMM = 180;
+      const imgHeightMM = (canvas.height * imgWidthMM) / canvas.width;
 
-      pdf.addImage(imgData, 'PNG', margin, yOffset > 0 ? yOffset : margin, imgW, imgH);
+      // Make PDF page exactly fit the certificate height
+      const pdf = new jsPDF({
+        orientation: imgHeightMM > imgWidthMM ? 'portrait' : 'landscape',
+        unit: 'mm',
+        format: [imgWidthMM + 20, imgHeightMM + 20]
+      });
+
+      pdf.addImage(imgData, 'PNG', 10, 10, imgWidthMM, imgHeightMM);
       pdf.save(`DigiTech_Certificate_${studentName || 'Student'}.pdf`);
     } catch (err) {
       console.error('PDF generation failed:', err);
