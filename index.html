@@ -676,6 +676,8 @@
     .network-types { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -718,7 +720,7 @@
     <div id="cert-modules"></div>
 
     <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
-      <button class="btn btn-yellow" onclick="printCertificate()">🖨️ Print Certificate</button>
+      <button class="btn btn-yellow" onclick="printCertificate()">⬇️ Download Certificate</button>
       <button class="btn" style="background:rgba(255,255,255,0.08);color:var(--muted);" onclick="document.getElementById('cert-modal').classList.remove('open')">✕ Close</button>
     </div>
     <div class="cert-footer">
@@ -3643,61 +3645,38 @@
     }
   }
 
-  function printCertificate() {
-    const certHTML = document.querySelector('.cert-wrap').innerHTML;
-    const styles = `
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      body { font-family: 'Nunito', sans-serif; background: #fff; padding: 2rem; color: #111; }
-      .cert-wrap { max-width: 600px; margin: 0 auto; border: 3px solid #b8960c; border-radius: 1.2rem; padding: 2.5rem 2rem; text-align: center; position: relative; }
-      .cert-wrap::before { content:''; position:absolute; inset:8px; border:1.5px solid rgba(184,150,12,0.3); border-radius:0.9rem; pointer-events:none; }
-      .cert-badge { font-size: 3rem; margin-bottom: 0.4rem; }
-      .cert-title { font-size: 0.7rem; font-weight:800; letter-spacing:3px; color:#b8960c; text-transform:uppercase; margin-bottom:0.3rem; font-family:'Space Mono',monospace; }
-      .cert-heading { font-size: 1.5rem; font-weight:900; margin-bottom:0.2rem; }
-      .cert-sub { color:#666; font-size:0.85rem; margin-bottom:1.2rem; }
-      .cert-name { font-size: 1.8rem; font-weight:900; color:#111; border-bottom:2px solid rgba(184,150,12,0.4); display:inline-block; padding-bottom:0.3rem; min-width:200px; margin-bottom:0.2rem; }
-      .cert-detail { font-size:0.85rem; color:#666; margin-bottom:1.2rem; }
-      .cert-rating { font-size:1.3rem; font-weight:900; margin-bottom:0.3rem; }
-      .cert-xp { font-family:'Space Mono',monospace; font-size:0.85rem; color:#b8960c; margin-bottom:1.4rem; }
-      .cert-module-section { text-align:left; margin-bottom:1rem; border:1px solid #ddd; border-radius:0.6rem; padding:0.8rem 1rem; background:#fafafa; }
-      .cert-module-title { font-size:0.68rem; font-weight:800; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:0.25rem; }
-      .cert-module-topic { font-size:0.72rem; color:#888; margin-bottom:0.4rem; font-style:italic; }
-      .cert-progress-track { background:#e5e5e5; border-radius:99px; height:7px; margin-bottom:0.4rem; overflow:hidden; flex:1; }
-      .cert-progress-fill { height:100%; border-radius:99px; }
-      .cert-narrative { font-size:0.78rem; color:#444; line-height:1.6; }
-      .cert-narrative p { margin-bottom:0.4rem; }
-      .cert-footer { font-size:0.7rem; color:#999; margin-top:1.2rem; border-top:1px solid #eee; padding-top:0.8rem; }
-      .cert-seal { font-size:1.6rem; margin-bottom:0.2rem; }
-      .btn { display: none !important; }
-      @media print { body { padding: 0; } }
-    `;
+  async function printCertificate() {
+    const btn = document.querySelector('.cert-wrap .btn');
+    if (btn) btn.style.display = 'none';
 
-    // Remove any existing print frame
-    const existing = document.getElementById('print-frame');
-    if (existing) existing.remove();
+    const certEl = document.querySelector('.cert-wrap');
 
-    const iframe = document.createElement('iframe');
-    iframe.id = 'print-frame';
-    iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:800px;height:600px;border:none;';
-    document.body.appendChild(iframe);
+    try {
+      const canvas = await html2canvas(certEl, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
 
-    iframe.onload = function() {
-      iframe.contentWindow.focus();
-      iframe.contentWindow.print();
-    };
+      const imgData = canvas.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-    const doc = iframe.contentDocument || iframe.contentWindow.document;
-    doc.open();
-    doc.write(`<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>DigiTech Certificate — ${studentName}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <style>${styles}</style>
-</head>
-<body><div class="cert-wrap">${certHTML}</div></body>
-</html>`);
-    doc.close();
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const margin = 15;
+      const imgW = pageW - margin * 2;
+      const imgH = (canvas.height * imgW) / canvas.width;
+      const yOffset = (pageH - imgH) / 2;
+
+      pdf.addImage(imgData, 'PNG', margin, yOffset > 0 ? yOffset : margin, imgW, imgH);
+      pdf.save(`DigiTech_Certificate_${studentName || 'Student'}.pdf`);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      alert('Could not generate PDF. Please try again.');
+    }
+
+    if (btn) btn.style.display = '';
   }
 </script>
 </body>
